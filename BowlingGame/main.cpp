@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <iomanip>
+#include <algorithm>
+
 #include <time.h>
 #include "Frame.h"
 #include "BowlingGame.h"	
@@ -117,6 +119,86 @@ void drawBowling()
   }
 }
 
+void playBowlingGame(int nbPlayers)
+{
+  BowlingGames players;
+  players.resize(nbPlayers);
+  //just for the fun set random name sorted in alphabetic order
+  static const std::vector<std::string> playerNames =
+    {"Alex"
+     ,"Bruno"
+     ,"Carine"
+     ,"Danielle"
+     ,"Eva"
+     ,"Frederik"
+     ,"Gabrielle"
+     ,"Hector"};
+  int playerCounter = 0;
+  for(BowlingGamesIt it = players.begin(); it != players.end(); ++it, playerCounter++)
+  {
+    BowlingGame& game = *it;
+    game.setPlayerName(playerNames[playerCounter]);
+    std::cout << "nb player " << playerCounter << " name " << playerNames[playerCounter] << std::endl;
+  }
+  //First, 10 FRAMES
+  for(int i = 0; i < MAX_FRAMES; ++i)
+  {
+    std::cout << "FRAME " << i+1 << std::endl;
+
+    for(BowlingGamesIt it = players.begin(); it != players.end(); ++it)
+    {
+      BowlingGame& game = *it;
+      int maxScore = MAX_PINS;
+      for(int j = 0; j < MAX_ATTEMPTS_PER_FRAME && maxScore != 0; ++j)
+      {
+        //use time nano to get diff seed for srand 
+        srand(current_time_nanoseconds());
+        
+        //number between 0 to MAX_PINS and sum = MAX_PINS
+        int nbOfPins = rand() % maxScore + 1;
+        maxScore -= nbOfPins;
+        game.roll(nbOfPins);
+
+        std::cout << game.getPlayerName() << " attempt " << j << " nbOfPins " << nbOfPins << std::endl;
+      }
+      int score = game.score();
+      // std::cout << "intermediaire score " << std::left << std::setw(5) << score
+      //           << " getTotalScore " << std::left << std::setw(5) << game.getTotalScore() << std::endl;
+    }
+    
+  }
+
+  //Then, Bonus?
+  for(BowlingGamesIt it = players.begin(); it != players.end(); ++it)
+  {
+    BowlingGame& game = *it;
+    int nbBonus = 2;
+    if(!game.isOver() && nbBonus)
+    {
+      --nbBonus;
+      srand(current_time_nanoseconds());
+      int nbOfPins = rand() % MAX_PINS + 1;
+      game.roll(nbOfPins);
+
+      std::cout << game.getPlayerName() << " BONUS nbOfPins " << nbOfPins << std::endl;
+      
+      int score = game.score();
+      // std::cout << "intermediaire score " << std::left << std::setw(5) << score
+      //           << " getTotalScore " << std::left << std::setw(5) << game.getTotalScore() << std::endl;
+    }
+  }
+
+  //rank players
+  std::sort(players.begin(), players.end());
+  std::cout << "SCORE" << std::endl;
+  int rank = 1;
+  for(BowlingGamesReverseIt it = players.rbegin(); it != players.rend(); ++it, ++rank)
+  {
+    std::cout << rank << " Congratulations " <<  std::left << std::setw(10) << it->getPlayerName() << "! your score is " << it->getTotalScore() << std::endl;
+  }
+  std::cout << "GAME is OVER " << std::endl;
+}
+
 int main()
 {
   std::string message = "Do you want to TEST (1) or to PLAY (2) Bowling Game or QUIT (3)?";
@@ -149,49 +231,13 @@ int main()
       {
         //Bowling game
         std::cout << "Game is simulated by random roll" << std::endl;
-
-        BowlingGame game;
-
-        //First, 10 FRAMES
-        for(int i = 0; i < MAX_FRAMES; ++i)
-        {
-          std::cout << "FRAME " << i+1 << std::endl;
-
-          int maxScore = MAX_PINS;
-          for(int j = 0; j < MAX_ATTEMPTS_PER_FRAME && maxScore != 0; ++j)
-          {
-            //use time nano to get diff seed for srand 
-            srand(current_time_nanoseconds());
-
-            //number between 0 to MAX_PINS and sum = MAX_PINS
-            int nbOfPins = rand() % maxScore + 1;
-            maxScore -= nbOfPins;
-            game.roll(nbOfPins);
-
-            std::cout << "attempt " << j << " nbOfPins " << nbOfPins << std::endl;
-          }
-
-          std::cout << "intermediaire score " << std::left << std::setw(5) << game.score()
-                    << " getTotalScore " << std::left << std::setw(5) << game.getTotalScore() << std::endl;
-        }
-
-        //Then, Bonus?
-        int nbBonus = 2;
-        if(!game.isOver() && nbBonus)
-        {
-          --nbBonus;
-          srand(current_time_nanoseconds());
-          int nbOfPins = rand() % MAX_PINS + 1;
-          game.roll(nbOfPins);
-
-          std::cout << "BONUS nbOfPins " << nbOfPins << std::endl;
-
-          std::cout << "intermediaire score " << std::left << std::setw(5) << game.score()
-                    << " getTotalScore " << std::left << std::setw(5) << game.getTotalScore() << std::endl;
-        }
-
-        std::cout << "GAME is OVER " << std::endl;
-        std::cout << "Congratulations! your score is " << game.getTotalScore() << std::endl;
+        std::cout << "how many players? (max 8 )";
+        int nbPlayers = 0;
+        std::cin >> nbPlayers;
+        if(nbPlayers > 0 && nbPlayers <= 8)
+          playBowlingGame(nbPlayers);
+        else
+          std::cout << "\n /\\ invalid number of players " << nbPlayers << "\n" << std::endl;
       }
       break;
     case 3:

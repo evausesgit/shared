@@ -1,4 +1,16 @@
 #include "BowlingGame.h"
+#include <iostream>
+
+BowlingGame::BowlingGame():
+  frames_(MAX_FRAMES + 2) //2 more for bonus
+  , frameCounter_(0)
+  , totalScore_(0)
+  , playerName_("")
+{
+  //mark 2 last frames as bonus frames
+  frames_[MAX_FRAMES].setIsBonus(true);
+  frames_[MAX_FRAMES + 1].setIsBonus(true);
+}
 
 //get number of pins per frame
 //count progressively score  
