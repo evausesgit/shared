@@ -4,21 +4,21 @@
 #include "Settings.h"
 #include "Frame.h"
 #include <vector>
+#include <string>
 #include <assert.h>
 
 class BowlingGame
 {
  public:
-  BowlingGame():
-      frames_(MAX_FRAMES + 2) //2 more for bonus
-    , frameCounter_(0)
-    , totalScore_(0)
-  {
-    //mark 2 last frames as bonus frames
-    frames_[MAX_FRAMES].setIsBonus(true);
-    frames_[MAX_FRAMES + 1].setIsBonus(true);
-  }
+  BowlingGame();
   ~BowlingGame(){}
+
+  //to sort player according to their totalScore
+  bool operator<( const BowlingGame & b) const { return this->getTotalScore() < b.getTotalScore(); }
+
+  //playerName
+  void setPlayerName(const std::string& name) { playerName_ = name; }
+  const std::string& getPlayerName() const { return playerName_; }
 
   int getTotalScore() const { return totalScore_; }
 
@@ -44,6 +44,9 @@ class BowlingGame
   std::vector<Frame> frames_;
   int                frameCounter_;
   int                totalScore_;
+  std::string        playerName_;
 };
-
+typedef std::vector<BowlingGame>       BowlingGames;
+typedef BowlingGames::iterator         BowlingGamesIt;
+typedef BowlingGames::reverse_iterator BowlingGamesReverseIt;
 #endif
