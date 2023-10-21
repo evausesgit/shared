@@ -12,7 +12,7 @@ headers = {
     'Host': 'api.rtrt.me',
     'Origin': 'https://app.rtrt.me',
     'User-Agent':
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
     'Referer': 'https://app.rtrt.me/',
     # 'Content-Length': '147',
     'Connection': 'keep-alive',
@@ -21,10 +21,10 @@ headers = {
 
 data = {
     'appid': '5824c5c948fd08c23a8b4567',
-    'token': 'A0C0CB5DFD1462A45EA5',
+    'token': '5EF0E7D3661985AFB00C',
     'max': '2000',
     'loc': '1',
-    'cbust': '0.40053277598132475',
+    'cbust': '0.17398596498606622',
     'places': '2',
     'etimes': '1',
     'units': 'metric',
@@ -34,13 +34,9 @@ data = {
 
 def query():
     response = requests.post(
-        'https://api.rtrt.me/events/IRM-LESSABLESDOLONNE703-2023/profiles/RVBM2GJY/splits',
+        'https://api.rtrt.me/events/IRM-CASCAIS-2023/profiles/R8SMRYT6/splits',
         headers=headers,
-        data=data,
-    )
-    """
-
-    """
+        data=data)
 
     return response.json()
 
@@ -51,20 +47,25 @@ from tabulate import tabulate
 
 # Known distances for each activity
 distances = {
-    "START": "0 km",
-    "SWIM": "1.9 km",  # For a typical Ironman 70.3 event
-    "T1": "Transition 1",
-    "BIKE1": "17.0 km",
-    "BIKE2": "42.0 km",
-    "BIKE3": "72.0 km",
-    "BIKE": "90.0 km",
-    "T2": "Transition 2",
-    "RUN1": "2.5 km",
-    "RUN2": "6.8 km",
-    "RUN3": "11.7 km",
-    "RUN4": "16.0 km",
-    "RUN5": "20.9 km",
-    "FINISH": "CONGRAT!"
+    "START": "703START",
+    "SWIM": "703SWIM",  # For a typical Ironman 70.3 event
+    "T1": "703T1",
+    "BIKE1": "703BIKE1",
+    "BIKE2": "703BIKE2",
+    "BIKE3": "703BIKE3",
+    "BIKE4": "703BIKE4",
+    "BIKE5": "703BIKE5",
+    "BIKE6": "703BIKE6",
+    "BIKE7": "703BIKE7",
+    "BIKE": "703BIKE",
+    "T2": "703T2",
+    "RUN1": "703RUN1",
+    "RUN2": "703RUN2",
+    "RUN3": "703RUN3",
+    "RUN4": "703RUN4",
+    "RUN5": "703RUN5",
+    "RUN": "703RUN",
+    "FINISH": "703FINISH"
     # Add other labels as needed
 }
 
@@ -79,9 +80,6 @@ def print_athlete_info(response):
     athlete_name = response["list"][0]["name"]
     athlete_sex = response["list"][0]["sex"]
     athlete_country = response["list"][0]["country"]
-    athlete_city = response["list"][0]["city"]
-    athlete_team = response["list"][0]["team"]
-    athlete_division = response["list"][0]["division"]
 
     # Print general info
     print(
